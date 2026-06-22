@@ -68,6 +68,7 @@
 
 #include <AP_Soaring/AP_Soaring.h>
 #include <AP_BattMonitor/AP_BattMonitor.h> // Battery monitor library
+#include <AP_BattEkf/AP_BattEkf.h>
 
 #include <AP_Arming/AP_Arming.h>
 #include <AP_Frsky_Telem/AP_Frsky_Telem.h>
@@ -435,6 +436,8 @@ private:
     AP_BattMonitor battery{MASK_LOG_CURRENT,
                            FUNCTOR_BIND_MEMBER(&Plane::handle_battery_failsafe, void, const char*, const int8_t),
                            _failsafe_priorities};
+
+    AP_BattEkf batt_ekf;
 
     struct {
         uint32_t last_tkoff_arm_time;
