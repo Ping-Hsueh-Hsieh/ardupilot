@@ -10,6 +10,7 @@
 #include <vector>
 #include "../AP_BattCagi.h"
 #include "../AP_BattEkfImpl.h"
+#include "../AP_BattRemTimeCalc.h"
 #include "CsvReader.h"
 
 namespace fs = std::filesystem;
@@ -58,6 +59,26 @@ void write_csv_cagi(fs::path path, std::vector<std::pair<float, float>> ress)
     outfile.close();
 }
 
+void write_csv_rem_time(fs::path path, std::vector<std::pair<float, float>> ress)
+{
+    std::ofstream outfile(path);
+    if (!outfile.is_open()) {
+        fs::remove(path);
+    }
+    outfile << "rem_time_fw_min,rem_time_vtol_min";
+    outfile << std::endl;
+    outfile << std::fixed << std::setprecision(4);
+
+    for (const auto& [rem_time_fw_min, rem_time_vtol_min] : ress) {
+        outfile << rem_time_fw_min;
+        outfile << ",";
+        outfile << rem_time_vtol_min;
+        outfile << std::endl;
+    }
+
+    outfile.close();
+}
+
 int main(void)
 {
     bool first = true;
@@ -72,9 +93,11 @@ int main(void)
     AP_BattEkfImpl batt_ekf = {};
     const Bat& bat = batt_ekf.get_bat();
     AP_BattCagi c_agi_awtls = AP_BattCagi(batt_ekf.get_bat());
+    AP_BattRemTimeCalc rem_calc;
 
     std::vector<EkfRes> ress(csv_data.size() - head_row_cnt);
     std::vector<std::pair<float, float>> cagi_ress(csv_data.size() - head_row_cnt);
+    std::vector<std::pair<float, float>> rem_time_ress(csv_data.size() - head_row_cnt);
 
     for (size_t row_idx = 0; row_idx < csv_data.size(); ++row_idx) {
         const auto& row = csv_data[row_idx];
@@ -101,6 +124,9 @@ int main(void)
                 c_agi_pct = c_agi_awtls.Qhat / bat.Q_Ah * 100.f - 100.f;
             }
             cagi_ress[row_idx - head_row_cnt] = std::pair(c_agi_awtls.Qhat, c_agi_pct);
+
+            rem_calc.update(c_agi_awtls.Qhat, soc, volt, curr);
+            rem_time_ress[row_idx - head_row_cnt] = std::pair(rem_calc.rem_time_fw_min, rem_calc.rem_time_vtol_min);
         }
     }
 
@@ -109,6 +135,9 @@ int main(void)
 
     fs::path out_cagi_path("./out/samples_out_c_agi.csv");
     write_csv_cagi(out_cagi_path, cagi_ress);
+
+    fs::path out_rem_time_path("./out/samples_out_rem_time.csv");
+    write_csv_rem_time(out_rem_time_path, rem_time_ress);
 
     return 0;
 }

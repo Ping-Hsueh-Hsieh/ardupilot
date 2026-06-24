@@ -27,10 +27,16 @@ if __name__ == '__main__':
     qhats = df_c_agi['qhat'].to_numpy()
     c_agi_pcts = df_c_agi['c_agi_pct'].to_numpy()
 
+    df_rem_time = pd.read_csv("./out/samples_out_rem_time.csv")
+    rem_time_fw_mins = df_rem_time['rem_time_fw_min'].to_numpy()
+    rem_time_vtol_mins = df_rem_time['rem_time_vtol_min'].to_numpy()
+
     c_agi = -0.032
     soc_cc = calc_cc_soc(times, currs, Q_As * (1 + c_agi)) + est_soc[0]
 
     soc_cc_no_agi = calc_cc_soc(times, currs, Q_As) + est_soc[0]
+
+    ####################################################################################################
 
     fig = plt.figure(figsize=(16, 10))
     gs = fig.add_gridspec(6, 1)
@@ -72,6 +78,24 @@ if __name__ == '__main__':
     ax_qhat.set_ylabel('agi[%]')
 
     fig.supxlabel('Time[s]')
+
+    fig.tight_layout()
+
+    ####################################################################################################
+
+    fig = plt.figure(figsize=(16, 10))
+    gs = fig.add_gridspec(2, 1)
+
+    ax_fw = fig.add_subplot(gs[0])
+    ax_fw.plot(rem_time_fw_mins, 'ko--', lw=1, ms=2, label='orig')
+    ax_fw.grid(c='gray', lw=0.5, ls='--', alpha=0.5)
+    ax_fw.set_ylabel('FW[min]')
+
+    ax_vtol = fig.add_subplot(gs[1], sharex=ax_fw)
+    ax_vtol.plot(rem_time_vtol_mins, 'ko--', lw=1, ms=2, label='orig')
+    ax_vtol.grid(c='gray', lw=0.5, ls='--', alpha=0.5)
+    ax_vtol.legend()
+    ax_vtol.set_ylabel('VTOL[min]')
 
     fig.tight_layout()
 
