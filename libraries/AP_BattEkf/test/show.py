@@ -23,9 +23,9 @@ if __name__ == '__main__':
     est_volt = df_res['est_volt'].to_numpy()
     sigma_soc = df_res['sigma_soc'].to_numpy()
 
-    # df_c_agi = pd.read_csv("./samples_out_c_agi.csv")
-    # qhats = df_c_agi['qhat'].to_numpy()
-    # c_agi_pcts = df_c_agi['pct'].to_numpy()
+    df_c_agi = pd.read_csv("./out/samples_out_c_agi.csv")
+    qhats = df_c_agi['qhat'].to_numpy()
+    c_agi_pcts = df_c_agi['c_agi_pct'].to_numpy()
 
     c_agi = -0.032
     soc_cc = calc_cc_soc(times, currs, Q_As * (1 + c_agi)) + est_soc[0]
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     soc_cc_no_agi = calc_cc_soc(times, currs, Q_As) + est_soc[0]
 
     fig = plt.figure(figsize=(16, 10))
-    gs = fig.add_gridspec(5, 1)
+    gs = fig.add_gridspec(6, 1)
 
     ax_curr = fig.add_subplot(gs[0])
     ax_curr.plot(times, currs, 'ko--', lw=1, ms=2, label='orig')
@@ -66,10 +66,10 @@ if __name__ == '__main__':
     ax_sigma.grid(c='gray', lw=0.5, ls='--', alpha=0.5)
     ax_sigma.set_ylabel('sigma[--]')
 
-    # ax_qhat = fig.add_subplot(gs[5], sharex=ax_curr)
-    # ax_qhat.plot(times, c_agi_pcts, 'ko--', lw=1, ms=2)
-    # ax_qhat.grid(c='gray', lw=0.5, ls='--', alpha=0.5)
-    # ax_qhat.set_ylabel('agi[%]')
+    ax_qhat = fig.add_subplot(gs[5], sharex=ax_curr)
+    ax_qhat.plot(times, c_agi_pcts, 'ko--', lw=1, ms=2)
+    ax_qhat.grid(c='gray', lw=0.5, ls='--', alpha=0.5)
+    ax_qhat.set_ylabel('agi[%]')
 
     fig.supxlabel('Time[s]')
 

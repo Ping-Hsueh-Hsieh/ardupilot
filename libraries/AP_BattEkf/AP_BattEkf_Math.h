@@ -34,6 +34,12 @@ inline float clamp(float x, float a, float b)
     return (x < a) ? a : ((x > b) ? b : x);
 }
 
+inline uint32_t us_diff_32(uint32_t now, uint32_t prev)
+{
+    if (now >= prev) return now - prev;
+    return now + (UINT32_MAX - prev);
+}
+
 inline float interp(float x, const std::vector<float>& xp, const std::vector<float>& fp)
 {
     if (xp.empty() || fp.empty()) return 0.0f;
@@ -109,5 +115,138 @@ inline std::array<float, 4> symmetrize2(const std::array<float, 4>& A)
 {
     float avg = (A[1] + A[2]) * 0.5f;
     return {A[0], avg, avg, A[3]};
+}
+
+inline std::pair<float, float> eval_poly(const std::array<float, 5>& coeffs, float x)
+{
+    float a4 = coeffs[0], a3 = coeffs[1], a2 = coeffs[2], a1 = coeffs[3], a0 = coeffs[4];
+    float x2 = x * x;
+    float x3 = x2 * x;
+    float x4 = x3 * x;
+
+    float y = a4 * x4 + a3 * x3 + a2 * x2 + a1 * x + a0;
+    float dy = 4.0 * a4 * x3 + 3.0 * a3 * x2 + 2.0 * a2 * x + a1;
+    return {y, dy};
+}
+
+inline float brent_root(const std::array<float, 5>& coeffs, float a, float b, float tol, int maxits)
+{
+    float fa = eval_poly(coeffs, a).first;
+    float fb = eval_poly(coeffs, b).first;
+
+    if (std::abs(fa) < 1e-15) return a;
+    if (std::abs(fb) < 1e-15) return b;
+    if ((fa * fb) > 0.0) return -1.f;  // Safe fallback if bracket fails
+
+    float c = a;
+    float fc = fa;
+    float s = 0.0;
+    float fs = 0.0;
+    float d = b - a;
+    bool mflag = true;
+
+    for (int iter = 0; iter < maxits; ++iter) {
+        if (std::abs(fa - fc) > 1e-15 && std::abs(fb - fc) > 1e-15) {
+            // Inverse quadratic interpolation
+            s = (a * fb * fc) / ((fa - fb) * (fa - fc)) + (b * fa * fc) / ((fb - fa) * (fb - fc)) + (c * fa * fb) / ((fc - fa) * (fc - fb));
+        } else {
+            // Secant method
+            s = b - fb * (b - a) / (fb - fa);
+        }
+
+        // Check if conditions for bisection are met
+        bool cond1 = (s < (3.0 * a + b) / 4.0) || (s > b);
+        bool cond2 = mflag && (std::abs(s - b) >= std::abs(b - c) / 2.0);
+        bool cond3 = (!mflag) && (std::abs(s - b) >= std::abs(c - d) / 2.0);
+        bool cond4 = mflag && (std::abs(b - c) < tol);
+        bool cond5 = (!mflag) && (std::abs(c - d) < tol);
+
+        if (cond1 || cond2 || cond3 || cond4 || cond5) {
+            s = (a + b) / 2.0;
+            mflag = true;
+        } else {
+            mflag = false;
+        }
+
+        fs = eval_poly(coeffs, s).first;
+        d = c;
+        c = b;
+        fc = fb;
+
+        if (fa * fs < 0.0) {
+            b = s;
+            fb = fs;
+        } else {
+            a = s;
+            fa = fs;
+        }
+
+        if (std::abs(fa) < std::abs(fb)) {
+            std::swap(a, b);
+            std::swap(fa, fb);
+        }
+
+        if ((std::abs(b - a) < tol) || (std::abs(fb) < 1e-15)) {
+            return b;
+        }
+    }
+    return b;
+}
+
+inline std::vector<float> unique_sorted(std::vector<float>& vals, float tol)
+{
+    if (vals.empty()) return vals;
+    std::sort(vals.begin(), vals.end());
+
+    std::vector<float> out;
+    out.push_back(vals[0]);
+
+    for (size_t i = 1; i < vals.size(); ++i) {
+        if (std::abs(vals[i] - vals[i - 1]) > tol) {
+            out.push_back(vals[i]);
+        }
+    }
+    return out;
+}
+
+inline std::vector<float> find_positive_roots(const std::array<float, 5>& coeffs, float xmin, float xmax, float step, float tol)
+{
+    std::vector<float> roots;
+    float x0 = xmin;
+    float f0 = eval_poly(coeffs, x0).first;
+    int samples = std::max(2, static_cast<int>(std::floor((xmax - xmin) / step)) + 1);
+
+    for (int i = 1; i <= samples; ++i) {
+        float x1 = std::min(xmax, xmin + i * step);
+        float f1 = eval_poly(coeffs, x1).first;
+
+        if ((std::abs(f0) < 1e-15) && (x0 > 0.0)) {
+            roots.push_back(x0);
+        }
+
+        if (f0 * f1 < 0.0) {
+            float r = brent_root(coeffs, x0, x1, tol, 100);
+            if (r > 0.0) {
+                roots.push_back(r);
+            }
+        }
+
+        if (std::abs(f1) < 1e-12 && x1 > 0.0) {
+            roots.push_back(x1);
+        }
+
+        x0 = x1;
+        f0 = f1;
+        if (x0 >= xmax) break;
+    }
+
+    return unique_sorted(roots, std::sqrt(tol));
+}
+
+inline size_t argmin(const std::vector<float>& vec)
+{
+    if (vec.empty()) return 0;
+    auto min_it = std::min_element(vec.begin(), vec.end());
+    return std::distance(vec.begin(), min_it);
 }
 }  // namespace MathUtils
