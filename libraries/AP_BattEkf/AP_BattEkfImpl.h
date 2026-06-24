@@ -7,6 +7,9 @@ class AP_BattEkfImpl
 {
    public:
     void process_sample(const Sample& sample);
+    Bat& get_bat(void) {
+        return this->bat;
+    }
 
     EkfRes res = {};
 
