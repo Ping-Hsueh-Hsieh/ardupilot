@@ -70,7 +70,7 @@ if __name__ == '__main__':
     ax_sigma = fig.add_subplot(gs[4], sharex=ax_curr)
     ax_sigma.plot(times, sigma_soc, 'ko--', lw=1, ms=2)
     ax_sigma.grid(c='gray', lw=0.5, ls='--', alpha=0.5)
-    ax_sigma.set_ylabel('sigma[--]')
+    ax_sigma.set_ylabel('3*sqrt(sigma)[--]')
 
     ax_qhat = fig.add_subplot(gs[5], sharex=ax_curr)
     ax_qhat.plot(times, c_agi_pcts, 'ko--', lw=1, ms=2)

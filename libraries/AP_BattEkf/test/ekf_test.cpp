@@ -32,7 +32,7 @@ void write_csv_ekf(fs::path path, std::vector<EkfRes> ress)
         outfile << ",";
         outfile << res.est_volt;
         outfile << ",";
-        outfile << res.SigmaX[0];
+        outfile << 3 * sqrt(res.SigmaX[0]);
         outfile << std::endl;
     }
 
