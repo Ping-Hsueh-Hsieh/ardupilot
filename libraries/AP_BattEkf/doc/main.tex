@@ -106,37 +106,39 @@ This article will explain what and how the EKF is used and deployed to the actua
     v(k) \label{eq:linear_output}
 \end{align}
 
+\subsection{Error System}
+
+
 According to \eqref{eq:linear_state}, and \eqref{eq:linear_output}, let
 
 \begin{align}
     x &= \begin{bmatrix}
         SOC &
         i_{bv}
-    \end{bmatrix}^{T} \\
-    u &= \left[ I \right]^{T} \\
-    y &= \left[ v_{cell} \right]^{T} \\
+    \end{bmatrix}^{T}, \quad u = \left[ I \right]^{T}, \quad y = \left[ v_{cell} \right]^{T} \\
     A &= \begin{bmatrix}
         1 & 0 \\
         0 & \frac{\tau}{\tau+\Delta t}
     \end{bmatrix} \\
-    B &= \begin{bmatrix}
+    B_{u} &= B_{w} = \begin{bmatrix}
         \frac{dt}{Q_{nom}}\\
         \frac{\Delta t}{\tau + \Delta t}
     \end{bmatrix} \\
     C &= \begin{bmatrix}
         \frac{dOCV}{dSOC} & R_{bv}
     \end{bmatrix} \\
-    D &= \begin{bmatrix}
-    R_{ac}
-\end{bmatrix}
+    D_{u} &= \begin{bmatrix}
+        R_{ac}
+    \end{bmatrix}, \quad D_{v} = \begin{bmatrix}
+        1
+    \end{bmatrix}
 \end{align}
 
-\subsection{Error System}
-
 System can be represent as this,
+
 \begin{align}
     x(k+1) = Ax(k) + B_{u}u(k) + B_{w}w(k), \\
-    y(k) = Cx(k) + D_{u}u(k) + D_{w}w(k)
+    y(k) = Cx(k) + D_{u}u(k) + D_{v}v(k)
 \end{align}
 
 The estimated model is
@@ -148,7 +150,7 @@ The estimated model is
 Then the error system should be,
 \begin{align}
     \tilde{x}(k+1) &= A\tilde{x}(k) + B_{w}w(k), \\
-    \tilde{y}(k) &= C\tilde{x}(k) + D_{w}w(k)
+    \tilde{y}(k) &= C\tilde{x}(k) + D_{v}v(k)
 \end{align}
 
 This should be the system for EKF.
