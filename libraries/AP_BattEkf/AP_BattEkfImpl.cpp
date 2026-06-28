@@ -1,11 +1,6 @@
 #include "AP_BattEkfImpl.h"
 #include <stdint.h>
 
-static inline uint32_t us_diff(uint32_t now, uint32_t prev)
-{
-    return (now >= prev) ? (now - prev) : (now + (0xFFFFFFFF) - prev + 1);
-}
-
 EkfRes AP_BattEkfImpl::handle_init(const Sample& sample)
 {
     xhat[0] = this->bat.ocv.luk_soc(sample.volt / this->bat.num_of_cell);
@@ -23,7 +18,7 @@ EkfRes AP_BattEkfImpl::handle_process(const Sample& sample)
     xhat[1] = 0.0f;
     yhat = sample.volt;
 
-    float dt_us = static_cast<float>(us_diff(sample.time, prior_t));
+    float dt_us = static_cast<float>(sample.time - prior_t);
     float dt = dt_us / 1000000.0f;
 
     prior_t = sample.time;
@@ -38,7 +33,8 @@ EkfRes AP_BattEkfImpl::handle_run(const Sample& sample)
     float volt_cell = sample.volt / this->bat.num_of_cell;
     float curr = sample.curr;
 
-    float dt_us = static_cast<float>(us_diff(sample.time, prior_t));
+    // WARN: since the time diff should not exceed UINT32_MAX, float should do the faver
+    float dt_us = static_cast<float>(sample.time - prior_t);
     float dt = dt_us / 1000000.0f;
 
     float tau_bv = this->bat.bv.tau;

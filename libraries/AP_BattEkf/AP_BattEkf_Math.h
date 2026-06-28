@@ -26,12 +26,6 @@ inline float clamp(float x, float a, float b)
     return (x < a) ? a : ((x > b) ? b : x);
 }
 
-inline uint32_t us_diff_32(uint32_t now, uint32_t prev)
-{
-    if (now >= prev) return now - prev;
-    return now + (UINT32_MAX - prev);
-}
-
 inline float interp(float x, const std::vector<float>& xp, const std::vector<float>& fp)
 {
     if (xp.empty() || fp.empty()) return 0.0f;
