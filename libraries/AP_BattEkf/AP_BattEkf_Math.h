@@ -7,7 +7,7 @@
 
 struct Sample
 {
-    uint32_t time;
+    uint64_t time;
     float curr;
     float volt;
 };

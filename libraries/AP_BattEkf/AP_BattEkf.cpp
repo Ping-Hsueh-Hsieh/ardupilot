@@ -75,7 +75,7 @@ void AP_BattEkf::update(void)
     if (!batt.current_amps(curr)) return;
 
     Sample sample = {
-        .time = AP_HAL::micros(),
+        .time = AP_HAL::micros64(),
         .curr = -curr,
         .volt = volt,
     };

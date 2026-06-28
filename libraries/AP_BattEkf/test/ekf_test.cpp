@@ -107,7 +107,7 @@ int main(void)
             std::cout << "heading: ";
             std::cout << row[0] << ", " << row[1] << ", " << row[2] << std::endl;
         } else {
-            uint32_t time = static_cast<uint32_t>(std::stof(row[0]) * 1e+6);
+            uint64_t time = static_cast<uint64_t>(std::stod(row[0]) * 1e+6);
             float curr = std::stof(row[1]);
             float volt = std::stof(row[2]);
             Sample sample = {time, curr, volt};

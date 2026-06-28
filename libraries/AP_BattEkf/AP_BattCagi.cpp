@@ -36,25 +36,25 @@ AP_BattCagi::AP_BattCagi(const Bat& b) : Qhat(b.Q_Ah), fit(0.f), bat(b)
     this->soh_pct = (1.f - b.c_agi) * 100.f;
 }
 
-AP_BattCagi::AP_BattCagi(const Bat& b, float initial_soc, uint32_t time_us) : AP_BattCagi(b)
+AP_BattCagi::AP_BattCagi(const Bat& b, float initial_soc, uint64_t time_us) : AP_BattCagi(b)
 {
     this->update_init(initial_soc, time_us);
 }
 
-void AP_BattCagi::update_init(float initial_soc, uint32_t time_us)
+void AP_BattCagi::update_init(float initial_soc, uint64_t time_us)
 {
     this->init_soc = initial_soc;
     this->prev_time_cc_us = time_us;
 }
 
-void AP_BattCagi::calc_cc_Ah(uint32_t time_us, float curr)
+void AP_BattCagi::calc_cc_Ah(uint64_t time_us, float curr)
 {
-    float dif_time_s = (float)MathUtils::us_diff_32(time_us, prev_time_cc_us) * 1e-6;
+    float dif_time_s = static_cast<float>(time_us - prev_time_cc_us) * 1e-6;
     cc_Ah += dif_time_s * curr / 3600.0f;
     prev_time_cc_us = time_us;
 }
 
-void AP_BattCagi::awtls(uint32_t time_us, float soc, float curr)
+void AP_BattCagi::awtls(uint64_t time_us, float soc, float curr)
 {
     calc_cc_Ah(time_us, curr);
 

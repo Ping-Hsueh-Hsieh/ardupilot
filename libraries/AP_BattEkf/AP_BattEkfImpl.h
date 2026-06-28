@@ -32,7 +32,7 @@ class AP_BattEkfImpl
     float SigmaV = 0.0f;
 
     float prior_i = 0.0f;
-    uint32_t prior_t = 0.0f;
+    uint64_t prior_t = 0.0;
     float prior_dt = 0.0f;
     float yhat = 0.0f;
 

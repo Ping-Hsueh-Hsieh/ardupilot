@@ -6,11 +6,11 @@ class AP_BattCagi
 {
    public:
     AP_BattCagi(const Bat& bat);
-    AP_BattCagi(const Bat& bat, float init_soc, uint32_t time_us);
+    AP_BattCagi(const Bat& bat, float init_soc, uint64_t time_us);
 
-    void calc_cc_Ah(uint32_t time_us, float curr);
-    void awtls(uint32_t time_us, float soc, float curr);
-    void update_init(float initial_soc, uint32_t time_us);
+    void calc_cc_Ah(uint64_t time_us, float curr);
+    void awtls(uint64_t time_us, float soc, float curr);
+    void update_init(float initial_soc, uint64_t time_us);
 
     float Qhat;
     float fit;
@@ -20,7 +20,7 @@ class AP_BattCagi
     // Core parameters and states
     const Bat& bat;
     float init_soc = 0.f;
-    uint32_t prev_time_cc_us = 0;
+    uint64_t prev_time_cc_us = 0;
     float cc_Ah = 0.0f;
 
     // Filters and weights

@@ -59,8 +59,8 @@ private:
 
     // Private helper calculations
     float get_vtol_landing_est_curr_A() const { return -60.0f; }
-    uint32_t get_vtol_reserved_landing_tries() const { return 3; }
-    uint32_t get_vtol_landing_time_s() const { return 90; }
+    uint64_t get_vtol_reserved_landing_tries() const { return 3; }
+    uint64_t get_vtol_landing_time_s() const { return 90; }
 
     float get_vtol_landing_coulumb_As_single() const {
         return get_vtol_landing_time_s() * get_vtol_landing_est_curr_A();
