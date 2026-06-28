@@ -1,9 +1,5 @@
 #pragma once
 
-#include <algorithm>
-#include <array>
-#include <cmath>
-#include <vector>
 #include "AP_BattEkf_Model.h"
 
 class AP_BattCagi
