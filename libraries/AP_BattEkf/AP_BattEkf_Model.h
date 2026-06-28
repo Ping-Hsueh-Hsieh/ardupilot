@@ -2,6 +2,14 @@
 #include "AP_BattEkf_Math.h"
 #include <vector>
 
+struct Bv
+{
+    float tau;
+    float rbv;
+
+    static Bv create_default() { return {20.0f, 1e-4f}; }
+};
+
 class Ir {
 public:
     float c_rate_Ah;

@@ -12,14 +12,6 @@ struct Sample
     float volt;
 };
 
-struct Bv
-{
-    float tau;
-    float rbv;
-
-    static Bv create_default() { return {20.0f, 1e-4f}; }
-};
-
 struct EkfRes
 {
     float est_soc;
