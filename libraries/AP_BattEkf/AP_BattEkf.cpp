@@ -8,7 +8,7 @@
 
 #define MP_ENABLE (0)
 
-static bool first = true;
+static bool c_agi_first = true;
 
 #if MP_ENABLE
 #define MP_START(x) (x).start()
@@ -86,9 +86,9 @@ void AP_BattEkf::update(void)
 
     AP_BattCagi c_agi_awtls = AP_BattCagi(this->get_bat());
 
-    if (first) {
+    if (c_agi_first) {
         c_agi_awtls.update_init(this->res.est_soc, sample.time);
-        first = false;
+        c_agi_first = false;
     } else {
         MP_START(mps.c_agi);
         c_agi_awtls.awtls(sample.time, this->res.est_soc, curr);
