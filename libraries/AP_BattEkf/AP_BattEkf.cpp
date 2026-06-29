@@ -10,6 +10,18 @@
 
 static bool c_agi_first = true;
 
+
+const AP_Param::GroupInfo AP_BattEkf::var_info[] = {
+    // @Param: DIS
+    // @DisplayName: Disable Battery EKF
+    // @Description: Disable the Battery EKF
+    // @Values: 0:False,1:True
+    // @User: Advanced
+    AP_GROUPINFO("DIS", 0, AP_BattEkf, param_disable, 0),
+
+    AP_GROUPEND,
+};
+
 #if MP_ENABLE
 #define MP_START(x) (x).start()
 #define MP_END(x) (x).end()
@@ -65,9 +77,19 @@ static Cfg cfg;
 
 static AP_BattRemTimeCalc rem_calc;
 
+void AP_BattEkf::init(void)
+{
+    if (param_disable.get() != 0) {
+        _disable = true;
+        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "[INFO] BattEkf disabled");
+    } else {
+        GCS_SEND_TEXT(MAV_SEVERITY_INFO, "[INFO] BattEkf enabled");
+    }
+}
+
 void AP_BattEkf::update(void)
 {
-
+    if (_disable) return;
     AP_BattMonitor& batt = AP::battery();
     float volt = batt.voltage();
     if (volt <= cfg.min_cell_volt * this->get_bat().num_of_cell) return;  // NOTE: this will prevent segfault during SITL

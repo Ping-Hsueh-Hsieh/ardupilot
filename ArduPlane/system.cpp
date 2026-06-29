@@ -45,6 +45,7 @@ void Plane::init_ardupilot()
 
     // initialise battery monitoring
     battery.init();
+    batt_ekf.init();
 
 #if AP_RSSI_ENABLED
     rssi.init();

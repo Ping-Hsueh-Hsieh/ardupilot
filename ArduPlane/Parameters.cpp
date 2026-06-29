@@ -881,6 +881,8 @@ const AP_Param::Info Plane::var_info[] = {
     // @Path: ../libraries/AP_BattMonitor/AP_BattMonitor.cpp
     GOBJECT(battery,                "BATT", AP_BattMonitor),
 
+    GOBJECT(batt_ekf,                "BATTEKF_", AP_BattEkf),
+
     // @Group: BRD_
     // @Path: ../libraries/AP_BoardConfig/AP_BoardConfig.cpp
     GOBJECT(BoardConfig,            "BRD_",       AP_BoardConfig),
