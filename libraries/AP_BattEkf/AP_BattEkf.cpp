@@ -133,3 +133,11 @@ void AP_BattEkf::update(void)
     // GCS_SEND_TEXT(MAV_SEVERITY_INFO, "[DEBUG] (%.4f, %.4f, %.4f, %.4f, %.4f)", volt, curr, this->res.est_soc, c_agi_awtls.Qhat, c_agi_awtls.soh_pct);
     MP_SHOW();
 }
+
+void AP_BattEkf::send_mavlink(mavlink_channel_t chan) const {
+    mavlink_msg_named_value_float_send(
+        chan,
+        AP_HAL::millis(),
+        "BATTEKF_SOC",
+        this->res.est_soc);
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<mavlink>
+    <include>common.xml</include>
+    <messages>
+        <message id="70000" name="BATTEKF">
+            <description>Battery EKF estimator output</description>
+
+            <!-- <field type="uint32_t" name="time_usec">Timestamp</field> -->
+            <!-- <field type="uint8_t" name="instance">Battery instance</field> -->
+
+            <field type="float" name="battekf_soc">State of charge</field>
+            <!-- <field type="float" name="soh">State of health</field> -->
+            <!-- <field type="float" name="voltage_est">Voltage estimate</field> -->
+            <!-- <field type="float" name="current_est">Current estimate</field> -->
+            <!-- <field type="float" name="resistance_est">Internal resistance</field> -->
+        </message>
+    </messages>
+</mavlink>

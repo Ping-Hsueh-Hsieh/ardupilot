@@ -371,6 +371,7 @@ static const ap_message STREAM_EXTRA3_msgs[] = {
 #if !APM_BUILD_TYPE(APM_BUILD_AntennaTracker)
     MSG_VIBRATION,
 #endif
+    MSG_BATTEKF,
 };
 
 static const ap_message STREAM_PARAMS_msgs[] = {

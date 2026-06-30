@@ -414,6 +414,11 @@ bool GCS_MAVLINK_Plane::try_send_message(enum ap_message id)
 #endif
         break;
 
+    case MSG_BATTEKF:
+        CHECK_PAYLOAD_SIZE(BATTEKF);
+        plane.batt_ekf.send_mavlink(chan);
+        break;
+
     default:
         return GCS_MAVLINK::try_send_message(id);
     }
