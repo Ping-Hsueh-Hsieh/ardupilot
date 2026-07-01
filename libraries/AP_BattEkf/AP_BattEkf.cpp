@@ -36,10 +36,15 @@ struct Mp
 {
     uint64_t start_ = 0;
     uint64_t end_ = 0;
+    double delta = 0.0;
 
     void start(void) { this->start_ = AP_HAL::micros64(); }
 
-    void end(void) { this->end_ = AP_HAL::micros64(); }
+    void end(void)
+    {
+        this->end_ = AP_HAL::micros64();
+        this->delta = delta_ms();
+    }
 
     uint64_t delta_u64(void)
     {
