@@ -87,6 +87,31 @@ void AP_BattEkf::init(void)
     }
 }
 
+void AP_BattEkf::gcs_writer(void)
+{
+    switch (msg_id) {
+    case SOC: {
+        gcs().send_named_float("SOC[%]", res.est_soc * 100);
+    } break;
+    case REM_FW: {
+        gcs().send_named_float("REM_FW[MIN]", rem_calc.rem_time_fw_min);
+    } break;
+    case REM_RTL: {
+        gcs().send_named_float("REM_RTL[MIN]", rem_calc.rem_time_vtol_min);
+    } break;
+    case SOH: {
+        gcs().send_named_float("SOH[%]", c_agi_awtls.soh_pct);
+    } break;
+    case ESTCAP: {
+        gcs().send_named_float("EstCap[Ah]", c_agi_awtls.Qhat);
+    } break;
+    default: break;
+    }
+
+    msg_id++;
+    msg_id = msg_id % gcs_writer_period;
+}
+
 void AP_BattEkf::update(void)
 {
     if (_disable) return;
@@ -121,12 +146,7 @@ void AP_BattEkf::update(void)
         MP_END(mps.rem_time);
     }
 
-    gcs().send_named_float("SOC[%]", this->res.est_soc * 100);
-    gcs().send_named_float("REM_FW[MIN]", rem_calc.rem_time_fw_min);
-    gcs().send_named_float("REM_RTL[MIN]", rem_calc.rem_time_vtol_min);
-    gcs().send_named_float("SOH[%]", c_agi_awtls.soh_pct);
-    gcs().send_named_float("EstCap[Ah]", c_agi_awtls.Qhat);
-
+    this->gcs_writer();
     AP::logger().WriteStreaming("CUST", "TimeUS,soc_pct,rem_fw_min,rem_rtl_min,soh_pct,est_cap_Ah", "Qfffff", AP_HAL::micros64(), this->res.est_soc * 100.f,
                                 rem_calc.rem_time_fw_min, rem_calc.rem_time_vtol_min, c_agi_awtls.soh_pct, c_agi_awtls.Qhat);
 
