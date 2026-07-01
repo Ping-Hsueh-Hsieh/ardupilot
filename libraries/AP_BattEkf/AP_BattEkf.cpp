@@ -3,13 +3,8 @@
 #include <AP_HAL/AP_HAL.h>
 #include <AP_Logger/AP_Logger.h>
 #include <GCS_MAVLink/GCS.h>
-#include "AP_BattCagi.h"
-#include "AP_BattRemTimeCalc.h"
 
 #define MP_ENABLE (0)
-
-static bool c_agi_first = true;
-
 
 const AP_Param::GroupInfo AP_BattEkf::var_info[] = {
     // @Param: DIS
@@ -80,8 +75,6 @@ struct Cfg
 
 static Cfg cfg;
 
-static AP_BattRemTimeCalc rem_calc;
-
 void AP_BattEkf::init(void)
 {
     if (param_disable.get() != 0) {
@@ -135,8 +128,6 @@ void AP_BattEkf::update(void)
     MP_START(mps.ekf);
     this->process_sample(sample);
     MP_END(mps.ekf);
-
-    AP_BattCagi c_agi_awtls = AP_BattCagi(this->get_bat());
 
     if (c_agi_first) {
         c_agi_awtls.update_init(this->res.est_soc, sample.time);
