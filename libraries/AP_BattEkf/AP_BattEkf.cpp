@@ -118,10 +118,11 @@ void AP_BattEkf::update(void)
     if (volt <= cfg.min_cell_volt * this->get_bat().num_of_cell) return;  // NOTE: this will prevent segfault during SITL
     float curr = 0.f;
     if (!batt.current_amps(curr)) return;
+    curr = -curr;
 
     Sample sample = {
         .time = AP_HAL::micros64(),
-        .curr = -curr,
+        .curr = curr,
         .volt = volt,
     };
 
