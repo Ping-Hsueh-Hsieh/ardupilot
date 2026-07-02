@@ -1,5 +1,4 @@
 #include "AP_BattCagi.h"
-#include "AP_BattEkf_Math.h"
 
 AP_BattCagi::AP_BattCagi(const Bat& b) : Qhat(b.Q_Ah), fit(0.f), bat(b)
 {

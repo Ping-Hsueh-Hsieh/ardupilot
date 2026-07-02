@@ -35,7 +35,7 @@ class AP_BattCagi
     float measY = 0.0;
 
     int update_cnt = 0;
-    const int C_AGI_UPDATE_SAMPLES = 1200;
+    const int C_AGI_UPDATE_SAMPLES = 600;
 
     float min_r = 0.0;
     float max_r = 0.0;
