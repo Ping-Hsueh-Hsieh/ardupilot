@@ -133,6 +133,9 @@ void Battery::setup(float _capacity_Ah, float _resistance_ohm, float _max_voltag
     max_voltage = _max_voltage;
     ambient_temperature_degC = _ambient_temperature_degC;
 
+    capacity_Ah = 22.0f;
+    max_voltage = 26.0f;
+
     voltage_set = max_voltage;
     voltage_filter.reset(voltage_set);
     remaining_Ah = compute_remaining_Ah(voltage_set);
