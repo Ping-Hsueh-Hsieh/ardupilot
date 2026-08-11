@@ -27,8 +27,8 @@ class AP_BattEkfImpl
     const float SXbump = 5.0f;
     std::array<float, 2> xhat = {0.0f, 0.0f};  // [soc, ibv]
     std::array<float, 4> SigmaX = {1e-2f, 0.0f, 0.0f, 1e-2f};
-    const float SigmaW = 0.1f;
-    const float SigmaV_Pack = 0.05f;
+    const float SigmaW = 0.1f * 0.1f;
+    const float SigmaV_Pack = 0.05f * 0.05f;
     float SigmaV = 0.0f;
 
     float prior_i = 0.0f;
